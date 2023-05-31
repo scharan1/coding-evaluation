@@ -9,6 +9,7 @@ namespace MyOrganization
     internal abstract class Organization
     {
         private Position root;
+        private int employeeId = 1;
 
         public Organization()
         {
@@ -26,7 +27,27 @@ namespace MyOrganization
          */
         public Position? Hire(Name person, string title)
         {
-            //your code here
+            return HireHelper(root, person, title);
+        }
+
+        private Position? HireHelper(Position position, Name person, string title)
+        {
+            if (position.GetTitle().Equals(title) && !position.IsFilled())
+            {
+                position.SetEmployee(new Employee(employeeId++, person));
+                return position;
+            }
+            else
+            {
+                foreach (var report in position.GetDirectReports())
+                {
+                    Position? found = HireHelper(report, person, title);
+                    if (found != null)
+                    {
+                        return found;
+                    }
+                }
+            }
             return null;
         }
 
